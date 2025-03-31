@@ -1,94 +1,114 @@
-# Workflow Management API
+# Workflow Management Application
 
-A RESTful API for managing automated workflows with steps like API calls and email notifications.
+A React-based application for creating, managing, and executing custom workflows with API integrations and email capabilities.
+
+## Application Overview
+
+This application allows users to create, edit, execute, and monitor custom workflows. Users can build workflows by connecting different nodes like API calls and email notifications in a visual editor.
 
 ## Features
 
-- Create, read, update, and delete workflows
-- Execute workflows with various step types:
-  - API calls
-  - Email notifications
-  - Conditional logic
-  - Delays
-  - Script execution
-- Authentication and authorization
-- MongoDB database for storage
+- User registration and authentication
+- Dashboard for workflow management
+- Visual workflow editor
+- Support for API calls and email notifications
+- Real-time execution feedback
+- Workflow versioning and history
 
-## Getting Started
+## Current Limitations & Future Roadmap
 
+- **Limited Node Types**: Currently, only API Call and Email nodes are implemented. More node types (conditional logic, delays, data transformation) will be added in future releases.
+- **Shortlisting Feature**: The workflow bookmarking/saving feature currently only implements the UI interaction without backend persistence. Full implementation is planned for a future update.
+- **Execution History**: A detailed execution history and logging view will be added in upcoming versions.
 
-#### Production Mode
+## Application Flow
 
-1. Clone the repository
-2. Copy `.env.example` to `.env` and configure your environment variables
-3. Build and start the containers:
+### 1. Authentication
 
-```bash
-docker-compose up -d
-```
+#### Registration
+1. New users can register by providing their email and password
+2. After successful registration, users are redirected to the login page
 
-#### Development Mode
+#### Login
+1. Users can login with their email and password
+2. After successful login, users are redirected to the dashboard
 
-For development with hot-reloading:
+### 2. Dashboard
 
-```bash
-docker-compose -f docker-compose.dev.yml up -d
-```
+The dashboard is the central hub of the application, displaying:
+- List of all user workflows
+- Search functionality to filter workflows
+- Options to create, edit, execute, and delete workflows
+- Workflow execution status indicators
 
-### Access the API
+#### Workflow Management Actions:
+- **Create**: Create a new workflow by clicking the "New Workflow" button
+- **Edit**: Modify an existing workflow by clicking the edit icon
+- **Execute**: Run a workflow by clicking the play button (shows real-time status)
+- **Delete**: Remove a workflow with animated slide-right transition
+- **Save/Bookmark**: Mark important workflows for quick access
 
-- API: [http://localhost:3000](http://localhost:3000)
-- MongoDB: localhost:27017
+### 3. Workflow Editor
 
-### Manual Setup
+The visual workflow editor allows users to:
+1. Add and connect different types of nodes:
+   - Start node (entry point)
+   - API Call nodes (for external API integration)
+   - Email nodes (for sending notifications)
+   - End node (exit point)
+   
+2. Configure node properties:
+   - API Call: Method, URL, Headers, Body
+   - Email: Recipient address
 
-If you prefer to run the application without Docker:
+3. Save the workflow with a title and description
 
-1. Install MongoDB
-2. Install Node.js (v14+)
-3. Clone the repository
-4. Install dependencies:
+### 4. Workflow Execution
 
-```bash
-npm install
-```
+When executing a workflow from the dashboard:
+1. The system processes each node in sequence
+2. Real-time status is displayed (spinner → success/error icon)
+3. Execution counts are automatically updated
+4. Results are shown without requiring page refresh
 
-5. Copy `.env.example` to `.env` and configure your environment variables
-6. Start the application:
+## Technical Implementation
 
-```bash
-# Development
-npm run dev
+- **Frontend**: React with hooks
+- **State Management**: Context API for workflow and authentication state
+- **Routing**: React Router for navigation
+- **UI**: Custom components with Tailwind CSS
+- **API Communication**: Axios for HTTP requests
+- **Visual Editor**: React Flow for workflow diagramming
 
-# Production
-npm start
-```
+## Usage Guide
 
-## Email Configuration
+### Creating a Workflow
+1. Log in to your account
+2. Click "New Workflow" from the dashboard
+3. Use the visual editor to add nodes
+4. Connect nodes by dragging from output handles to input handles
+5. Configure each node with the required parameters
+6. Click the document icon to save your workflow with a title and description
 
-For email functionality, set up Gmail credentials in the `.env` file:
+### Executing a Workflow
+1. From the dashboard, find the workflow you want to execute
+2. Click the play button to run the workflow
+3. Watch the status indicator for execution progress
+4. Green checkmark indicates successful execution
+5. Red X indicates an error occurred
 
-```
-USE_GMAIL=true
-GMAIL_USER=your_email@gmail.com
-GMAIL_APP_PASSWORD=your_app_password_here
-```
+### Editing a Workflow
+1. Click the edit icon on a workflow from the dashboard
+2. Modify the workflow structure or node configurations
+3. Wishlist a particular workflow using the document icon
 
-Note: You need to use an "App Password" rather than your regular password.
+## Security Considerations
 
-## API Documentation
+- JWT-based authentication
+- Secure API token storage
+- Input validation to prevent injection attacks
+- Request authorization for all API endpoints
 
-### Endpoints
+---
 
-- `POST /api/auth/register` - Register a new user
-- `POST /api/auth/login` - Login and get JWT token
-- `GET /api/workflows` - Get all workflows for the authenticated user
-- `GET /api/workflows/:id` - Get a single workflow
-- `POST /api/workflows` - Create a new workflow
-- `PUT /api/workflows/:id` - Update a workflow
-- `DELETE /api/workflows/:id` - Delete a workflow
-- `POST /api/workflows/:id/execute` - Execute a workflow
-
-## License
-
-[MIT](LICENSE) 
+This application simplifies the creation and management of automated workflows, allowing users to integrate various services without writing code.
