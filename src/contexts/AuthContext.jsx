@@ -109,7 +109,7 @@ const AuthProvider = ({ children }) => {
     delete axios.defaults.headers.common['Authorization'];
 
     // Redirect to login page
-    window.location.href = '/login';
+    window.location.href = '#/login';
   };
 
   // Check if user is authenticated
