@@ -45,13 +45,15 @@ const API_URL = import.meta.env.VITE_API_URL;
   // Initialize from workflowToEdit when component mounts or workflowToEdit changes
   useEffect(() => {
     if (!workflowToEdit || !workflowToEdit.sequence || !workflowToEdit.metadata) {
+      console.log('No workflow to edit or invalid workflow data:', workflowToEdit);
       return;
     }
 
     try {
+      console.log('Initializing workflow editor with data:', workflowToEdit);
       // Start with fresh nodes
-      const newNodes= [];
-      const newEdges= [];
+      const newNodes = [];
+      const newEdges = [];
 
       // Add start node
       if (workflowToEdit.sequence.start && workflowToEdit.sequence.start.id) {
@@ -68,6 +70,7 @@ const API_URL = import.meta.env.VITE_API_URL;
       if (Array.isArray(workflowToEdit.sequence.steps)) {
         workflowToEdit.sequence.steps.forEach((step) => {
           if (step && step.id && step.type) {
+            console.log('Creating node for step:', step);
             newNodes.push({
               id: step.id,
               type: step.type === 'apiCall' ? 'apiCall' : 'email',
@@ -201,6 +204,9 @@ const API_URL = import.meta.env.VITE_API_URL;
         return;
       }
 
+      // Log current nodes state before creating workflow sequence
+      console.log('Current nodes state:', nodes);
+
       // Create a structured workflow sequence
       const workflowSequence = {
         id: workflowToEdit?.id || `workflow-${Date.now()}`,
@@ -220,28 +226,33 @@ const API_URL = import.meta.env.VITE_API_URL;
           },
           steps: nodes
             .filter((node) => node.type !== "start" && node.type !== "end")
-            .map((node) => ({
-              id: node.id,
-              type: node.type || "",
-              config: {
-                ...(node.type === "apiCall" && {
-                  method: node.data?.method || "GET",
-                  url: node.data?.url || "",
-                  headers: node.data?.headers || "",
-                  body: node.data?.body || "",
-                }),
-                ...(node.type === "email" && {
-                  email: node.data?.email || "",
-                }),
-              },
-              next: edges.find((edge) => edge.source === node.id)?.target || "",
-            })),
+            .map((node) => {
+              console.log('Processing node for workflow sequence:', node);
+              return {
+                id: node.id,
+                type: node.type || "",
+                config: {
+                  ...(node.type === "apiCall" && {
+                    method: node.data?.method || "GET",
+                    url: node.data?.url || "",
+                    headers: node.data?.headers || "",
+                    body: node.data?.body || "",
+                  }),
+                  ...(node.type === "email" && {
+                    email: node.data?.email || "",
+                  }),
+                },
+                next: edges.find((edge) => edge.source === node.id)?.target || "",
+              };
+            }),
           end: {
             id: nodes.find((node) => node.type === "end")?.id || "",
             type: "end",
           },
         },
       };
+
+      console.log('Saving workflow sequence:', workflowSequence);
 
       // Save the workflow
       const token = localStorage.getItem('token');

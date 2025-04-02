@@ -18,6 +18,7 @@ export function APICallNode({ id, data }) {
 
   useEffect(() => {
     if (isModalOpen) {
+      console.log('Opening API Call node modal with data:', data);
       setFormData({
         method: data.method || 'GET',
         url: data.url || '',
@@ -36,7 +37,8 @@ export function APICallNode({ id, data }) {
   const handleSave = (e) => {
     e.preventDefault();
     
-    
+    // Log the form data for debugging
+    console.log('Saving API Call node with data:', formData);
     
     setNodes((nodes) =>
       nodes.map((node) =>
